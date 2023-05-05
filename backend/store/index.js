@@ -4,7 +4,7 @@ const router = express.Router();
 
 require('dotenv').config();
 const mongoose = require('mongoose');
-const { uploadPdf, askAnything } = require('../controllers');
+const { uploadPdf, askAnything, getChats } = require('../controllers');
 const uri = `mongodb+srv://gunjanpdfchat:${process.env.MONGODB_PASSWORD}@pdfchat.2vussga.mongodb.net/?retryWrites=true&w=majority`;
 
 
@@ -28,5 +28,6 @@ router.post('/upload', upload.single('pdf'), uploadPdf);
 
 //ask any question from a pdf file
 router.post('/ask', askAnything);
+router.get('/chats', getChats);
 
 module.exports = router;

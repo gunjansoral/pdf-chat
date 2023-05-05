@@ -40,7 +40,9 @@ exports.uploadPdf = async (req, res) => {
       contentType: req.file.mimetype,
       fileName: req.file.originalname,
     });
+    console.log("hi")
     await pdf.save();
+    res.json({ success: "pdf uploaded successfully", pdfId: pdf.id })
   } catch (err) {
     console.log(err);
   }
@@ -53,6 +55,7 @@ exports.askAnything = async (req, res) => {
 
     //find a pdf file data from a given pdfId
     const pdf = await PDF.findOne({ _id: pdf_id });
+
     if (!pdf) {
       return res.status(404).json({ message: 'PDF not found' });
     }
@@ -62,13 +65,36 @@ exports.askAnything = async (req, res) => {
     const answer = await generateCompletion(question, pdfData.text);
 
 
-    //store the conversations in the database
-    // const chat = new Chat({
-
-    // })
-    res.json({ answer })
+    // store the conversations in the database
+    const chat = new Chat({
+      chatId,
+      userId,
+      pdfId,
+      question,
+      answer,
+      timestamp: new Date()
+    })
+    await chat.save();
+    res.json(answer)
     //send the answer as a response to the frontend
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
+}
+
+exports.getChats = async (req, res) => {
+  const { chatId, userId, pdfId } = req.body;
+  //find user by userId, pdf by pdfId, chats by chatId
+  Chat.find({ userId, pdfId, chatId })
+    .sort({ timestamp: 1 })
+    .then(chats => {
+      //send chats to the frontend
+      if (chats)
+        res.json(chats)
+      else
+        res.json({ message: "no chats found", })
+    })
+    .catch(err => {
+      res.json({ error: err.message })
+    })
 }
