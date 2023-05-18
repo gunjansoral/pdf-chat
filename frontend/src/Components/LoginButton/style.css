@@ -1,0 +1,16 @@
+.login_button_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #111;
+  border-radius: 10px;
+  width: fit-content;
+  padding: 20px;
+  cursor: pointer;
+}
+
+.google_logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

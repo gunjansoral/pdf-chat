@@ -1,0 +1,6 @@
+.message_container {
+  display: flex;
+  background-color: bisque;
+  border: 1px solid #111;
+  border-radius: 2px;
+}
