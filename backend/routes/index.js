@@ -5,7 +5,7 @@ const cors = require('cors')
 
 require('dotenv').config();
 const { authentication, authenticationCallback } = require('../controllers/authControllers')
-const { uploadPdf, askAnything, getChats } = require('../controllers');
+const { uploadPdf, getUser, askAnything, getMessages } = require('../controllers');
 const { requireAuth } = require('../controllers/authControllers');
 
 //middlewares
@@ -20,6 +20,7 @@ router.post('/upload', requireAuth, upload.single('pdf'), uploadPdf);
 
 //ask any question from a pdf file
 router.post('/ask', requireAuth, askAnything);
-router.get('/chats', requireAuth, getChats);
+router.get('/messages', requireAuth, getMessages);
+router.get('/user', requireAuth, getUser);
 
 module.exports = router;

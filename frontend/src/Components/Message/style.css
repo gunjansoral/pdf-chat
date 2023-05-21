@@ -1,6 +1,21 @@
 .message_container {
   display: flex;
-  background-color: bisque;
-  border: 1px solid #111;
+  background-color: var(--ai-msg-bg-color);
   border-radius: 2px;
+  padding: 10px;
+}
+
+.avatar img {
+  max-width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.message_right {
+  padding: 0 20px 0 20px;
+}
+
+.user {
+  background-color: var(--user-msg-bg-color);
 }

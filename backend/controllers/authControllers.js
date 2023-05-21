@@ -29,7 +29,6 @@ exports.authenticationCallback = async (req, res) => {
     const { email, name, picture } = userInfo.data;
     // Save user information to database if not already exists
     const check = await User.findOne({ email });
-    console.log(check)
     if (check === null) {
       const user = new User({
         name,
@@ -38,9 +37,8 @@ exports.authenticationCallback = async (req, res) => {
       })
       await user.save();
     }
-    const token = jwt.sign({ email }, 'secretKey', { expiresIn: '7d' });
+    const token = jwt.sign({ email, name, picture }, 'secretKey', { expiresIn: '7d' });
     // Redirect to homepage or dashboard
-    console.log(token)
     res.cookie('token', token, { maxAge: 7 * 24 * 60 * 60 * 1000 });
     return res.redirect(`${FRONTEND_URL}/`)
   } catch (error) {
@@ -52,12 +50,11 @@ exports.authenticationCallback = async (req, res) => {
 exports.requireAuth = (req, res, next) => {
   try {
     const response = req.headers.authorization;
-    const token = response.slice(7)
-    if (!token) {
-      return res.status(401).json({ message: 'No token provided' });
-    }
+    const token = response?.slice(7)
     const decoded = jwt.verify(token, 'secretKey');
-    req.email = decoded.email;
+    req.name = decoded?.name;
+    req.email = decoded?.email;
+    req.picture = decoded?.picture;
     next();
   } catch (error) {
     console.log(error.message)

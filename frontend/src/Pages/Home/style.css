@@ -1,0 +1,11 @@
+.messages-container {
+  height: calc(100vh - 88px);
+  overflow-y: auto;
+}
+
+.home-right {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}

@@ -18,7 +18,7 @@ const generateCompletion = async (question, context) => {
 }
 
 const startANewChat = async (req, res) => {
-  const { chatName, user, pdf } = req.body;
+  const { chatName, user, pdf } = req.query;
   const chat = new Chat({
     chatName,
     user,
@@ -115,31 +115,89 @@ exports.askAnything = async (req, res) => {
     // store the message in the database
     const aiMessage = new Message({
       sender: aiId,
+      user: userId,
       content: answer,
       chat: chatId
     })
     await aiMessage.save();
-    res.json(answer)
     //send the answer as a response to the frontend
+    res.json(answer)
   } catch (err) {
     console.log(err)
     res.status(500).json({ message: err.message });
   }
 }
 
-exports.getChats = async (req, res) => {
-  const { chat, user, pdf, } = req.body;
+exports.getMessages = async (req, res) => {
+  const { chat, pdf, } = req.query;
   //find user by userId, pdf by pdfId, chats by chatId
-  Chat.find({ chat, user, pdf })
-    .sort({ timestamp: 1 })
-    .then(chats => {
+  const userFound = await User.findOne({ email: req.email });
+  const pdfFound = await Pdf.findOne({ fileName: pdf });
+  const chatFound = await Chat.findOne({ chatName: chat });
+  const aiBotFound = await AiBot.findOne({ name: "PDFAssist" });
+  if (userFound === null)
+    return res.status(404).json({ message: 'User not found' });
+  const userId = userFound?._id;
+
+  if (pdfFound === null)
+    return res.status(404).json({ message: 'Pdf not found' });
+  const pdfId = pdfFound?._id
+
+  let chatId = "";
+  if (chatFound === null) {
+    const newChat = new Chat({
+      chatName: chat,
+      user: userId,
+      pdf: pdfId,
+    })
+    await newChat.save();
+    chatId = newChat._id;
+  } else {
+    chatId = chatFound._id;
+  }
+
+  const aiId = aiBotFound?._id;
+  Message.find({
+    $or: [
+      { sender: userId },
+      {
+        sender: aiId,
+        user: userId
+      }
+    ],
+    chat: chatId
+  })
+    .sort({ createdAt: 1 })
+    .then(messages => {
       //send chats to the frontend
-      if (chats)
-        res.json(chats)
+      if (messages) {
+        const msgs = messages.map((message) => {
+          if (message.sender.toString() === userId.toString())
+            return { message, name: userFound.name, email: userFound.email, picture: userFound.pic }
+          if (message.sender.toString() === aiId.toString())
+            return { message, name: aiBotFound.name, email: aiBotFound.email, picture: aiBotFound.pic }
+        })
+        res.json(msgs)
+      }
       else
         res.json({ message: "No chats found, create a new chat" })
     })
     .catch(err => {
       res.json({ error: err.message })
     })
+}
+
+exports.getUser = async (req, res) => {
+  try {
+    const { name, email, picture } = req;
+    const userFound = await User.findOne({ email });
+    if (userFound) {
+      const { lastPdf, lastChat } = userFound;
+      res.json({ name, email, picture, lastPdf, lastChat });
+    } else
+      res.json({ message: "No user found" })
+  } catch (err) {
+    console.log(err.message);
+
+  }
 }
