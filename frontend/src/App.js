@@ -4,17 +4,19 @@ import './App.css';
 import Home from './Pages/Home';
 import { MessagesContextProvider } from './Contexts/messagesContext';
 import { UserContextProvider } from './Contexts/userContext';
+import { ChatContextProvider } from './Contexts/chatContext';
 
 function App() {
-
   return (
     <UserContextProvider>
-      <MessagesContextProvider>
-        <Routes >
-          <Route path='/login' element={<LoginPage />} />
-          <Route path='/' element={<Home />} />
-        </Routes>
-      </MessagesContextProvider>
+      <ChatContextProvider>
+        <MessagesContextProvider>
+          <Routes>
+            <Route path='/' element={<Home />} />
+            <Route path='/login' element={<LoginPage />} />
+          </Routes>
+        </MessagesContextProvider>
+      </ChatContextProvider>
     </UserContextProvider>
   );
 }

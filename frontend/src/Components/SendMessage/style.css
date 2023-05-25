@@ -1,23 +1,27 @@
 .send-message-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
   padding: 20px;
   background-color: #525252;
+  z-index: 999;
 }
 
 .send-message-container input {
   color: #e0e0e0;
   background-color: #505050;
-  border: 1px solid #644848;
+  border: 1px solid #0000003b;
   border-radius: 10px;
   padding: 8px;
   width: 50%; /* Adjust to your desired width */
   height: 30px;
   font-size: 14px;
   text-align: left;
-  box-shadow: 1px 0px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 1px 0px 10px rgba(0, 0, 0, 0.11);
   outline: none; /* Remove the default input outline */
 }
 
@@ -26,7 +30,7 @@
 }
 
 .send-message-container input:focus {
-  border-color: #ff6767; /* Change the border color when input is focused */
+  border-color: #727272; /* Change the border color when input is focused */
 }
 
 .send-icon {

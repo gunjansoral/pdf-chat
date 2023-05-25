@@ -1,12 +1,15 @@
 :root {
+  --color-primary-darkmode: #666666;
   --user-msg-bg-color: #333333;
   --ai-msg-bg-color: #444444;
   --font-darkmode: #dfdede;
+  --font-brightmode: #202020;
 }
 
 body {
-  color: var(--font-darkmode) !important;
+  color: var(--font-darkmode);
   line-height: 2;
+  background-color: var(--ai-msg-bg-color);
 }
 
 .App {

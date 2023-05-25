@@ -5,13 +5,15 @@ import { createContext, useState } from 'react';
 const UserContext = createContext();
 // Create a provider component
 export const UserContextProvider = ({ children }) => {
-  const token = Cookies.get('token');
+  const token = Cookies.get('token') || '';
   const [userData, setUserData] = useState({ token })
 
   // Define any functions or state variables that you want to share
 
   return (
-    <UserContext.Provider value={{ userData, setUserData }}>
+    <UserContext.Provider value={{
+      userData, setUserData
+    }}>
       {children}
     </UserContext.Provider>
   );

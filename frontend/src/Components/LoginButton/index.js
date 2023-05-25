@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import './style.css'
 import { AiOutlineGoogle } from 'react-icons/ai'
 import Cookies from 'js-cookie';
@@ -7,7 +7,6 @@ const LoginButton = () => {
   const handleLogin = async () => {
     window.location.href = 'http://localhost:8000/auth/google';
     const token = Cookies.get('token')
-    console.log(token)
   }
 
   return (

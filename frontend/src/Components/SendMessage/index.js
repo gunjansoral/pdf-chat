@@ -5,24 +5,11 @@ import axios from 'axios';
 import UserContext from '../../Contexts/userContext';
 
 
-const SendMessage = ({ placeholder }) => {
-  const [text, setText] = useState('');
+const SendMessage = ({ placeholder, sendMessage, setText, text }) => {
+  const [sendBoxText, setSendBoxText] = useState('');
   const { userData } = useContext(UserContext);
   const { token } = userData;
 
-  const handleClick = async () => {
-    await axios.post('http://localhost:8000/ask', {
-      pdf: 'GunjanSoralResume.pdf',
-      chat: 'newchat',
-      question: text
-    }, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
-    });
-  }
   return (
     <div className="send-message-container">
       <input type="text"
@@ -30,9 +17,12 @@ const SendMessage = ({ placeholder }) => {
         placeholder={placeholder}
         value={text}
       />
-      <div className="send-icon" onClick={handleClick} >
-        <AiOutlineSend />
-      </div>
+      {text === '' ? (<div className="send-icon"  >
+        <AiOutlineSend color='#111' />
+      </div>) :
+        (<div className="send-icon" onClick={sendMessage} >
+          <AiOutlineSend />
+        </div>)}
     </div>
   )
 }
