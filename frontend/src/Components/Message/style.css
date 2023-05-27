@@ -1,6 +1,6 @@
 .message_container {
   display: flex;
-  background-color: var(--ai-msg-bg-color);
+
   border-radius: 2px;
   padding: 10px;
 }
@@ -17,5 +17,5 @@
 }
 
 .user {
-  background-color: var(--user-msg-bg-color);
+  background-color: var(--color-secondarydark-darkmode);
 }

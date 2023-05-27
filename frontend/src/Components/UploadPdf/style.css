@@ -1,0 +1,171 @@
+.drop-zone {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.drag-a-pdf-container {
+  display: flex;
+  cursor: pointer;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #fff;
+  border-radius: 5px;
+  width: 400px;
+  height: 400px;
+}
+
+.drag-a-pdf-container:hover {
+  background-color: var(--color-hover-darkmode);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #fff;
+  border-radius: 5px;
+}
+
+.dragging {
+  background-color: var(--color-hover-darkmode) !important;
+}
+
+/* select pdf */
+.select-pdf-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.select-pdf-container input {
+  background-color: #eaeaea00;
+  color: #333;
+  border: none;
+
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.select-pdf-container input::file-selector-button {
+  /* Modify the button properties */
+  /* Example styles */
+  background-color: var(--color-button-darkmode);
+  color: var(--color-secondarydark-darkmode);
+  border: 1px solid var(--color-secondarydark-darkmode);
+  padding: 12px 12px;
+  border-radius: 4px;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.08s ease-out;
+  /* Add any other desired styles */
+}
+
+.select-pdf-container input::file-selector-button:hover {
+  /* Modify the button properties */
+  /* Example styles */
+  background-color: var(--color-button-hover-darkmode);
+  color: var(--color-secondarydark-darkmode);
+  border: 1px solid var(--color-secondarydark-darkmode);
+  padding: 12px 12px;
+  border-radius: 4px;
+  width: 100%;
+  cursor: pointer;
+  /* Add any other desired styles */
+}
+
+.select-pdf-container input::file-selector-button::after {
+  content: "";
+}
+
+/* filename and uploaded pdf */
+.file-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.uploaded-pdf-container {
+  display: flex;
+  background-color: var(--color-secondarydark-darkmode);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #fff;
+  border-radius: 5px;
+  width: 400px;
+  height: 400px;
+}
+
+.filename-container {
+  position: absolute;
+  top: 501px;
+  display: flex;
+  padding: 20px;
+  gap: 5px;
+}
+
+.filename-container input {
+  padding: 0;
+}
+
+.filename-container p {
+  margin: 0;
+  position: relative;
+}
+
+.edit-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  padding: 1px 2px;
+  border-radius: 20%;
+}
+
+.edit-icon:hover {
+  background-color: var(--color-primarydark-darkmode);
+}
+
+.file-container input[type="text"] {
+  background-color: #ffffff00;
+  border: none;
+  /* ... */
+}
+
+.file-container input[type="text"]:focus {
+  border: none;
+  outline: none;
+  color: #fff;
+  text-align: center;
+  /* ... */
+}
+
+.buttons-container {
+  display: flex;
+  width: 100%;
+  margin-top: 10px;
+  gap: 10px;
+}
+
+.buttons-container div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+  outline: none;
+  color: var(--color-font-button-darkmode);
+  border-radius: 5px;
+  background-color: var(--color-button-darkmode);
+  width: 100%;
+  padding: 20px;
+  transition: all 0.08s ease-out;
+}
+
+.buttons-container div:hover {
+  background-color: var(--color-button-hover-darkmode);
+}

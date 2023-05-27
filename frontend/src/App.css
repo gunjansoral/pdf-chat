@@ -1,15 +1,20 @@
 :root {
-  --color-primary-darkmode: #666666;
-  --user-msg-bg-color: #333333;
-  --ai-msg-bg-color: #444444;
-  --font-darkmode: #dfdede;
+  --color-primarydark-darkmode: #6b665f;
+  --color-primarylight-darkmode: #d8d6c9;
+  --color-hover-darkmode: #5f5e4b;
+  --color-secondarydark-darkmode: #242932;
+  --color-secondarylight-darkmode: #d1cccc;
+  --color-button-darkmode: #d8d6c9;
+  --color-button-hover-darkmode: #ffffff;
+  --color-background-darkmode: #3f4a48;
+  --color-font-button-darkmode: #363634;
+  --font-darkmode: #d8d6c9;
   --font-brightmode: #202020;
 }
 
 body {
   color: var(--font-darkmode);
-  line-height: 2;
-  background-color: var(--ai-msg-bg-color);
+  background-color: var(--color-background-darkmode);
 }
 
 .App {

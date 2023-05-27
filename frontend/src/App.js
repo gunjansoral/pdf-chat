@@ -5,6 +5,7 @@ import Home from './Pages/Home';
 import { MessagesContextProvider } from './Contexts/messagesContext';
 import { UserContextProvider } from './Contexts/userContext';
 import { ChatContextProvider } from './Contexts/chatContext';
+import Pdfs from './Pages/Pdfs';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Routes>
             <Route path='/' element={<Home />} />
             <Route path='/login' element={<LoginPage />} />
+            <Route path='/pdfs' element={<Pdfs />} />
           </Routes>
         </MessagesContextProvider>
       </ChatContextProvider>
