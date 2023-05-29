@@ -1,0 +1,33 @@
+.pdf-container {
+  position: relative;
+  display: flex;
+  background-color: var(--color-secondarydark-darkmode);
+  flex-direction: row;
+  align-items: center;
+  border: 1px solid #fff;
+  border-radius: 5px;
+  width: 100%;
+  height: fit-content;
+}
+
+.uploaded-pdf-icon {
+  padding: 10px 0 6px 3px;
+}
+
+.pdf-filename-container {
+}
+
+.pdf-container p {
+  margin: 0;
+}
+
+.pdf-filename .tooltip {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pdf-filename {
+  display: flex;
+  gap: 5px;
+}

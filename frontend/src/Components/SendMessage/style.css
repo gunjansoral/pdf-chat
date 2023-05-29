@@ -7,13 +7,16 @@
   justify-content: center;
   align-items: center;
   padding: 20px;
-  background-color: #525252;
+  background-color: var(--color-primarydark-darkmode);
   z-index: 999;
+  background-color: rgba(40, 48, 49, 0.473);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
 }
 
 .send-message-container input {
-  color: #e0e0e0;
-  background-color: #505050;
+  color: var(--font-primary);
+  background-color: rgba(40, 48, 49, 0.473);
   border: 1px solid #0000003b;
   border-radius: 10px;
   padding: 8px;

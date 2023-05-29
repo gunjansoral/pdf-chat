@@ -7,7 +7,6 @@ import UserContext from '../../Contexts/userContext';
 import SendMessage from '../../Components/SendMessage';
 import Cookies from 'js-cookie';
 import io from 'socket.io-client';
-import NavBar from '../../Components/NavBar';
 import ChatContext from '../../Contexts/chatContext';
 import { useNavigate } from 'react-router-dom';
 const ENDPOINT = 'http://localhost:8000';
@@ -77,7 +76,6 @@ const Home = () => {
   }, [])
   return (
     <div className="home-container">
-      <NavBar />
       <div className="home-left"></div>
       <div className="home-right">
         {messages && <div className="messages-container"

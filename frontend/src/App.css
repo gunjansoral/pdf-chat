@@ -1,5 +1,5 @@
 :root {
-  --color-primarydark-darkmode: #6b665f;
+  --color-primarydark-darkmode: #687a6e;
   --color-primarylight-darkmode: #d8d6c9;
   --color-hover-darkmode: #5f5e4b;
   --color-secondarydark-darkmode: #242932;
@@ -10,6 +10,8 @@
   --color-font-button-darkmode: #363634;
   --font-darkmode: #d8d6c9;
   --font-brightmode: #202020;
+  --tooltip-bg: #feffb0;
+  --tooltip-font: #111;
 }
 
 body {
@@ -24,4 +26,22 @@ body {
 .App-logo {
   height: 40vmin;
   pointer-events: none;
+}
+
+/* Track */
+::-webkit-scrollbar {
+  width: 10px; /* Width of the scrollbar */
+  background-color: var(--color-secondarydark-darkmode);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--color-hover-darkmode); /* Color of the scrollbar handle */
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(
+    --color-primarylight-darkmode
+  ); /* Color of the scrollbar handle on hover */
 }

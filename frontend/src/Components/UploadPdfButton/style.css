@@ -1,0 +1,17 @@
+.upload-pdf-button-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-right: 51px;
+}
+
+.upload-pdf-container {
+  cursor: pointer;
+  background-color: rgba(95, 53, 53, 0);
+}
+
+.upload-pdf-container:hover {
+  background-color: var(--color-hover-darkmode);
+}

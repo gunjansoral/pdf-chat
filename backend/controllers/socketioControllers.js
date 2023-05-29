@@ -28,6 +28,14 @@ const generateCompletion = async (question, context) => {
   return response.data.choices[0].text;
 }
 
+const getPdfs = async (email, socket) => {
+  const userFound = await User.findOne({ email });
+
+  const pdfs = await Pdf.find({ user: userFound._id });
+  await socket.emit('pdfsData', pdfs)
+  return pdfs ? pdfs : [];
+}
+
 const getMessages = async (req, socket) => {
   const { email, chat, pdf, } = req;
   //find user by userId, pdf by pdfId, chats by chatId
@@ -194,5 +202,20 @@ exports.connection = (socket) => {
 
     socket.join(userData);
     socket.emit('message recieved', data);
+  })
+
+  socket.on('renamepdf', async (data) => {
+    const { fileName, text } = data;
+    const pdfFound = await Pdf.findOne({ fileName });
+    if (pdfFound) {
+      pdfFound.fileName = text + '.pdf';
+      await pdfFound.save();
+      console.log(pdfFound.fileName);
+      socket.emit('renamepdfedited', pdfFound.fileName)
+    }
+  })
+
+  socket.on('getpdfs', async () => {
+    const pdfs = await getPdfs(email, socket)
   })
 }

@@ -2,8 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import './style.css'
 import { CiEdit } from 'react-icons/ci'
 import { AiFillFilePdf, AiOutlineEnter, AiOutlineFilePdf } from 'react-icons/ai'
+import Info from '../Info';
+import useClickOutside from '../../CustomHooks/useClickOutside';
 
-const UploadPdf = () => {
+const UploadPdf = ({ setIsUploadPdf }) => {
+  const dropZoneRef = useRef(null);
   const fileNameRef = useRef(null);
   const fileNameContainerRef = useRef(null)
 
@@ -14,22 +17,22 @@ const UploadPdf = () => {
   const [isTextEdit, setIsTextEdit] = useState(false);
   const [fileName, setFileName] = useState('');
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (fileNameContainerRef?.current && !fileNameContainerRef?.current.contains(event.target)) {
-        // Perform the action when clicked outside the input
-        if (isTextEdit) {
+  useClickOutside(fileNameContainerRef, () => {
+    if (isTextEdit) {
+      setIsTextEdit(false);
+      setText(fileName);
+    }
+  });
 
-          setIsTextEdit(false);
-          setText(fileName);
-        }
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+  useClickOutside(dropZoneRef, () => {
+    setIsUploadPdf(false)
+  })
+
+  useEffect(() => {
+    if (fileNameRef.current) {
+      fileNameRef.current.style.width = `${fileNameRef.current.value.length + 0.5}ch`;
+    }
+  }, [text]);
 
   const handleDragEnter = (e) => {
     e.preventDefault();
@@ -71,15 +74,19 @@ const UploadPdf = () => {
   };
 
   const handleRename = async () => {
-    await setIsTextEdit(true);
-    await setText(fileName)
+    setIsTextEdit(true);
+    await setText(fileName.replace(/\.pdf$/, ''))
     await fileNameRef.current.focus();
   };
 
   const handleRenameSubmit = async () => {
-    await setFileName(text);
-    await setText(fileName)
-    setIsTextEdit(false);
+    if (text === '') {
+      console.log('pdf name cannot be empty')
+    } else {
+      await setFileName(text + '.pdf');
+      await setText(fileName.replace(/\.pdf$/, ''))
+      setIsTextEdit(false);
+    }
   };
 
   const resetName = () => {
@@ -122,71 +129,82 @@ const UploadPdf = () => {
 
   return (
     <div className='drop-zone'>
-      {file ? (
-        <div className='file-container'>
-          <div className='uploaded-pdf-container' >
-            <div className="uploaded-pdf">
-              <AiFillFilePdf size='100' />
+      <div ref={dropZoneRef}>
+        {file ? (
+          <div className='file-container'>
+            <div className='uploaded-pdf-container' >
+              <div className="uploaded-pdf">
+                <AiFillFilePdf size='100' />
+              </div>
+              <h4>Uploaded PDF:</h4>
             </div>
-            <h4>Uploaded PDF:</h4>
-          </div>
-          <div ref={fileNameContainerRef} className="filename-container">
-            {isTextEdit ? (
-              <input
-                type='text'
-                ref={fileNameRef}
-                onChange={(e) => setText(e.target.value)}
-                value={text}
-                onKeyDown={handleKeyDown}
-              />
-            ) : (
-              <p >{fileName}</p>
-            )}
-            {isTextEdit ? (
-              <div className="edit-icon" onClick={handleRenameSubmit}>
-                <AiOutlineEnter />
-              </div>
-            ) : (
-              <div className="edit-icon" onClick={handleRename}>
-                <CiEdit />
-              </div>
-            )}
-          </div>
+            <div ref={fileNameContainerRef} className="filename-container">
+              {isTextEdit ? (
+                <div className="filename-main-container">
+                  <input
+                    type='text'
+                    ref={fileNameRef}
+                    onChange={(e) => setText(e.target.value)}
+                    value={text}
+                    onKeyDown={handleKeyDown}
+                  />
+                  <span>.pdf</span>
+                </div>
+              ) : (
+                <p >{fileName}</p>
+              )}
+              {isTextEdit ? (
+                <Info text='Enter' >
+                  <div className="edit-icon" onClick={handleRenameSubmit}>
+                    <AiOutlineEnter />
+                  </div>
+                </Info>
 
-          <div className="buttons-container">
-            <div type='submit' onClick={handleSubmit}>
-              Submit
+              ) : (
+                <Info text='Edit'>
+                  <div className="edit-icon" onClick={handleRename}>
+                    <CiEdit />
+                  </div>
+                </Info>
+
+              )}
             </div>
-            <div onClick={handleCancel}>
-              Cancel
+
+            <div className="buttons-container">
+              <div type='submit' onClick={handleSubmit}>
+                Submit
+              </div>
+              <div onClick={handleCancel}>
+                Cancel
+              </div>
             </div>
           </div>
-        </div>
-      ) : (
-        <div className='select-pdf-container'>
-          <div
-            className={`drag-a-pdf-container ${dragging ? 'dragging' : ''} `}
-            onClick={() => chooseFileRef.current.click()}
-            onDragEnter={handleDragEnter}
-            onDragLeave={handleDragLeave}
-            onDragOver={handleDragOver}
-            onDrop={handleDrop}
-          >
-            <div className="drag-a-pdf">
-              <AiOutlineFilePdf size='100' />
+        ) : (
+          <div className='select-pdf-container'>
+            <div
+              className={`drag-a-pdf-container ${dragging ? 'dragging' : ''} `}
+              onClick={() => chooseFileRef.current.click()}
+              onDragEnter={handleDragEnter}
+              onDragLeave={handleDragLeave}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+            >
+              <div className="drag-a-pdf">
+                <AiOutlineFilePdf size='100' />
+              </div>
+              <h4>Drag and drop a PDF file here</h4>
             </div>
-            <h4>Drag and drop a PDF file here</h4>
+            <p>or</p>
+            <input
+              ref={chooseFileRef}
+              type="file"
+              accept="application/pdf"
+              onChange={handleFileInputChange}
+              onKeyDown={handleKeyDown}
+            />
           </div>
-          <p>or</p>
-          <input
-            ref={chooseFileRef}
-            type="file"
-            accept="application/pdf"
-            onChange={handleFileInputChange}
-            onKeyDown={handleKeyDown}
-          />
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

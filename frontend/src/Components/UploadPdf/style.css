@@ -1,8 +1,15 @@
 .drop-zone {
   display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 50%;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  width: 100vw;
+  background-color: rgba(12, 12, 12, 0.404);
+  backdrop-filter: blur(12px);
 }
 
 .drag-a-pdf-container {
@@ -133,6 +140,9 @@
 .file-container input[type="text"] {
   background-color: #ffffff00;
   border: none;
+  color: #fff;
+  font-size: 16px;
+  text-align: center;
   /* ... */
 }
 
@@ -155,14 +165,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-
   cursor: pointer;
   outline: none;
   color: var(--color-font-button-darkmode);
   border-radius: 5px;
   background-color: var(--color-button-darkmode);
   width: 100%;
-  padding: 20px;
+  padding: 15px;
   transition: all 0.08s ease-out;
 }
 

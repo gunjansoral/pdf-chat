@@ -2,10 +2,10 @@
   display: flex;
   justify-content: space-between;
   width: 100%;
-  /* background-color: var(--color-primary-darkmode); */
   background-color: rgba(168, 166, 166, 0);
   padding: 10px 50px;
   position: fixed;
+  top: 0;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(12px);
 }
