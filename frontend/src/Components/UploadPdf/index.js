@@ -1,9 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import './style.css'
 import { CiEdit } from 'react-icons/ci'
 import { AiFillFilePdf, AiOutlineEnter, AiOutlineFilePdf } from 'react-icons/ai'
 import Info from '../Info';
 import useClickOutside from '../../CustomHooks/useClickOutside';
+import { io } from 'socket.io-client';
+import UserContext from '../../Contexts/userContext';
 
 const UploadPdf = ({ setIsUploadPdf }) => {
   const dropZoneRef = useRef(null);
@@ -16,6 +18,20 @@ const UploadPdf = ({ setIsUploadPdf }) => {
   const [text, setText] = useState('');
   const [isTextEdit, setIsTextEdit] = useState(false);
   const [fileName, setFileName] = useState('');
+  const { userData } = useContext(UserContext)
+  let socket;
+  const ENDPOINT = 'http://localhost:8000/';
+
+
+  useEffect(() => {
+    socket = io(ENDPOINT, {
+      query: {
+        token: userData.token,
+      },
+    });
+    socket.on('connect', () => {
+    })
+  })
 
   useClickOutside(fileNameContainerRef, () => {
     if (isTextEdit) {
@@ -26,7 +42,7 @@ const UploadPdf = ({ setIsUploadPdf }) => {
 
   useClickOutside(dropZoneRef, () => {
     setIsUploadPdf(false)
-  })
+  });
 
   useEffect(() => {
     if (fileNameRef.current) {
@@ -93,11 +109,28 @@ const UploadPdf = ({ setIsUploadPdf }) => {
     setFileName(file.name);
   };
 
-  const handleSubmit = () => {
-    // Perform the submit action with the uploaded file
-    if (file) {
-      console.log('Submitting file:', file);
+  const handleSubmit = async (file, fileName) => {
+    try {
+      const fileData = await readFileAsArrayBuffer(file); // Function to read file as ArrayBuffer
+      const fileObject = {
+        data: fileData,
+        name: fileName
+      };
+      await socket.emit('uploadpdf', fileObject); // Emit the event 'pdfFile' with the file object
+      setIsUploadPdf(false)
+    } catch (error) {
+      console.log('An error occurred while sending the PDF file:', error);
     }
+  };
+
+  // Function to read file as ArrayBuffer
+  const readFileAsArrayBuffer = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+      reader.readAsArrayBuffer(file);
+    });
   };
 
   const handleCancel = () => {
@@ -171,7 +204,7 @@ const UploadPdf = ({ setIsUploadPdf }) => {
             </div>
 
             <div className="buttons-container">
-              <div type='submit' onClick={handleSubmit}>
+              <div type='submit' onClick={() => handleSubmit(file, fileName)}>
                 Submit
               </div>
               <div onClick={handleCancel}>

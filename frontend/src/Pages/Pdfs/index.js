@@ -8,6 +8,8 @@ import UploadPdfButton from '../../Components/UploadPdfButton';
 
 const Pdfs = () => {
   const { userData } = useContext(UserContext);
+  const [pdfs, setPdfs] = useState([]);
+  const [isUploadPdf, setIsUploadPdf] = useState(false)
 
   let socket;
   const ENDPOINT = 'http://localhost:8000/';
@@ -27,13 +29,8 @@ const Pdfs = () => {
     socket.on('pdfsData', (data) => {
       setPdfs(data);
     })
-  }, []);
+  }, [isUploadPdf]);
 
-  useEffect(() => {
-    console.log(pdfs)
-  }, [])
-  const [pdfs, setPdfs] = useState([]);
-  const [isUploadPdf, setIsUploadPdf] = useState(false)
   return (
     <div className="pdfs-container">
       <div className="pdfs-header">

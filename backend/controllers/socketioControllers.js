@@ -186,6 +186,31 @@ const askAnything = async (req, res, socket) => {
   }
 }
 
+const uploadPdf = async (req, email) => {
+  try {
+    const { name } = req;
+    const check = await Pdf.findOne({ fileName: name });
+    // Save the pdf buffer to MongoDB using Mongoose
+    const userFound = await User.findOne({ email });
+    const userId = userFound?._id;
+    if (check === null) {
+      const pdfBuffer = req.data;
+      const binaryData = new Binary(pdfBuffer, Binary.SUBTYPE_BYTE_ARRAY);
+      const newPdf = new Pdf({
+        data: binaryData,
+        contentType: 'application/pdf',
+        fileName: name,
+        user: userId
+      });
+      await newPdf.save();
+    } else {
+      console.log('pdf with this name is already exists')
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 exports.connection = (socket) => {
   const { name, email, picture } = socket.decoded;
   const res = {};
@@ -217,5 +242,10 @@ exports.connection = (socket) => {
 
   socket.on('getpdfs', async () => {
     const pdfs = await getPdfs(email, socket)
+  })
+
+  socket.on('uploadpdf', (data) => {
+    console.log(data)
+    uploadPdf(data, email)
   })
 }
