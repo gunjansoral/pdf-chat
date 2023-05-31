@@ -31,3 +31,22 @@
   display: flex;
   gap: 5px;
 }
+
+.pdf-right {
+  position: absolute;
+  bottom: 11px;
+  right: 11px;
+}
+
+.delete-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  padding: 1px 2px;
+  border-radius: 20%;
+}
+
+.delete-icon:hover {
+  color: #fff;
+}

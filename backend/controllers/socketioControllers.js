@@ -186,23 +186,40 @@ const askAnything = async (req, res, socket) => {
   }
 }
 
-const uploadPdf = async (req, email) => {
+const deletePdf = async (req, email, socket) => {
+  try {
+    const { fileName } = req;
+    const userFound = await User.findOne({ email });
+    const pdfFound = await Pdf.findOneAndRemove({ fileName, user: userFound._id });
+    // Save the pdf buffer to MongoDB using Mongoose
+    if (!pdfFound) {
+      console.log("pdf with this name doesn't exists")
+    }
+    const pdfs = await Pdf.find({ user: userFound._id })
+    socket.emit('pdfsData', pdfs)
+  } catch (err) {
+    console.log(err);
+  }
+}
+const uploadPdf = async (req, email, socket) => {
   try {
     const { name } = req;
-    const check = await Pdf.findOne({ fileName: name });
-    // Save the pdf buffer to MongoDB using Mongoose
     const userFound = await User.findOne({ email });
-    const userId = userFound?._id;
-    if (check === null) {
+    const pdfFound = await Pdf.findOne({ fileName: name, user: userFound._id });
+    // Save the pdf buffer to MongoDB using Mongoose
+    if (pdfFound === null) {
       const pdfBuffer = req.data;
       const binaryData = new Binary(pdfBuffer, Binary.SUBTYPE_BYTE_ARRAY);
       const newPdf = new Pdf({
         data: binaryData,
         contentType: 'application/pdf',
         fileName: name,
-        user: userId
+        user: userFound._id
       });
       await newPdf.save();
+
+      const pdfs = await Pdf.find({ user: userFound._id })
+      socket.emit('pdfsData', pdfs)
     } else {
       console.log('pdf with this name is already exists')
     }
@@ -241,11 +258,15 @@ exports.connection = (socket) => {
   })
 
   socket.on('getpdfs', async () => {
-    const pdfs = await getPdfs(email, socket)
+    await getPdfs(email, socket)
   })
 
-  socket.on('uploadpdf', (data) => {
-    console.log(data)
-    uploadPdf(data, email)
+  socket.on('uploadpdf', async (data) => {
+    await uploadPdf(data, email, socket)
+  })
+
+  socket.on('deletepdf', async (data) => {
+    await deletePdf(data, email, socket);
+    console.log('delete')
   })
 }

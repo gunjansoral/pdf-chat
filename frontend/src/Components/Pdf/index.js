@@ -2,11 +2,12 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import './style.css';
 import { CiEdit } from 'react-icons/ci';
 import { AiFillFilePdf, AiOutlineEnter } from 'react-icons/ai';
+import { RiDeleteBin6Line } from 'react-icons/ri';
 import Info from '../Info';
 import { io } from 'socket.io-client';
 import UserContext from '../../Contexts/userContext';
 
-const Pdf = ({ name }) => {
+const Pdf = ({ name, socket }) => {
   const fileNameRef = useRef(null);
   const fileNameContainerRef = useRef(null);
   const { userData } = useContext(UserContext);
@@ -15,13 +16,6 @@ const Pdf = ({ name }) => {
   const [isTextEdit, setIsTextEdit] = useState(false);
   const [fileName, setFileName] = useState(name);
   const [loading, setLoading] = useState(false);
-  let socket;
-  const ENDPOINT = 'http://localhost:8000/';
-  socket = io(ENDPOINT, {
-    query: {
-      token: userData.token,
-    },
-  });
 
   const handleRenameSubmit = async () => {
     if (text === '') {
@@ -43,6 +37,15 @@ const Pdf = ({ name }) => {
     });
 
   }, []);
+
+  const handleDelete = async () => {
+    await socket.emit('deletepdf', {
+      fileName
+    })
+    await socket.emit('getpdfs', () => {
+      console.log('getpdfs')
+    })
+  }
 
   useEffect(() => {
     if (fileNameRef.current) {
@@ -131,6 +134,11 @@ const Pdf = ({ name }) => {
           )}
         </div>
         <span>Created at : tuesday</span>
+      </div>
+      <div className="pdf-right">
+        <div className="delete-icon" onClick={handleDelete}>
+          <RiDeleteBin6Line />
+        </div>
       </div>
     </div>
   );

@@ -10,3 +10,20 @@
   /* Add margin-bottom to all elements except the last one */
   margin-bottom: 10px;
 }
+
+.pdfs-container input[type="text"] {
+  background-color: #ffffff00;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  text-align: center;
+  /* ... */
+}
+
+.pdfs-container input[type="text"]:focus {
+  border: none;
+  outline: none;
+  color: #fff;
+  text-align: center;
+  /* ... */
+}

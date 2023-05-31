@@ -134,7 +134,7 @@
 }
 
 .edit-icon:hover {
-  background-color: var(--color-primarydark-darkmode);
+  color: #fff;
 }
 
 .file-container input[type="text"] {

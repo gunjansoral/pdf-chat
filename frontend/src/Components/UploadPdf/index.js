@@ -7,7 +7,7 @@ import useClickOutside from '../../CustomHooks/useClickOutside';
 import { io } from 'socket.io-client';
 import UserContext from '../../Contexts/userContext';
 
-const UploadPdf = ({ setIsUploadPdf }) => {
+const UploadPdf = ({ setIsUploadPdf, socket }) => {
   const dropZoneRef = useRef(null);
   const fileNameRef = useRef(null);
   const fileNameContainerRef = useRef(null)
@@ -19,19 +19,7 @@ const UploadPdf = ({ setIsUploadPdf }) => {
   const [isTextEdit, setIsTextEdit] = useState(false);
   const [fileName, setFileName] = useState('');
   const { userData } = useContext(UserContext)
-  let socket;
-  const ENDPOINT = 'http://localhost:8000/';
 
-
-  useEffect(() => {
-    socket = io(ENDPOINT, {
-      query: {
-        token: userData.token,
-      },
-    });
-    socket.on('connect', () => {
-    })
-  })
 
   useClickOutside(fileNameContainerRef, () => {
     if (isTextEdit) {
