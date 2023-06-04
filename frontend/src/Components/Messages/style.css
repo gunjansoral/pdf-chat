@@ -1,0 +1,18 @@
+.messages-main-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.messages-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: calc(100vh - 170px);
+  overflow: auto;
+  padding: 70px 0 100px 0;
+}
+
+.message-inner-container {
+  display: flex;
+  padding: 10px;
+}

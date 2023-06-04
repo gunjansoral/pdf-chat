@@ -1,8 +1,4 @@
 .message_container {
-  display: flex;
-
-  border-radius: 2px;
-  padding: 10px;
 }
 
 .avatar img {
@@ -13,9 +9,40 @@
 }
 
 .message_right {
+  display: flex;
+  flex: 1;
   padding: 0 20px 50px 20px;
+}
+
+.message-right span {
+  width: 200px;
+  height: 100px;
+  overflow: scroll;
 }
 
 .user {
   background-color: var(--color-secondarydark-darkmode);
+}
+
+.message-outer-content {
+  padding: 10px;
+  display: flex;
+  justify-content: end;
+  width: calc(100% - 20p);
+  flex: 1;
+}
+
+.message-delete-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 18px;
+  height: 18px;
+
+  cursor: pointer;
+  padding: 2px 2px;
+}
+
+.message-delete-button:hover {
+  color: #fff;
 }

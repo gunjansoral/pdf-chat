@@ -6,6 +6,7 @@
   padding: 10px 50px;
   position: fixed;
   top: 0;
+  z-index: 999;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(12px);
 }

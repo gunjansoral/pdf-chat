@@ -22,6 +22,7 @@ const io = require("socket.io")(server, {
   },
 });
 
+
 //middlewares
 app.use(bodyParser.json());
 app.use('/', router)

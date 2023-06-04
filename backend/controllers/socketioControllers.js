@@ -20,80 +20,136 @@ exports.requireAuth = (socket, next) => {
 }
 
 const generateCompletion = async (question, context) => {
-  const response = await openai.createCompletion({
-    model: "text-davinci-003",
-    max_tokens: 2000,
-    prompt: `Question: ${question}\nContext: ${context}`,
-  })
-  return response.data.choices[0].text;
+  try {
+    const response = await openai.createCompletion({
+      model: "text-davinci-003",
+      max_tokens: 2000,
+      prompt: `Question: ${question}\nContext: ${context}`,
+    })
+    return response.data.choices[0].text;
+  } catch (error) {
+    console.log(error.message);
+    throw error;
+  }
 }
 
 const getPdfs = async (email, socket) => {
-  const userFound = await User.findOne({ email });
+  try {
+    const userFound = await User.findOne({ email });
 
-  const pdfs = await Pdf.find({ user: userFound._id });
-  await socket.emit('pdfsData', pdfs)
-  return pdfs ? pdfs : [];
+    const pdfs = await Pdf.find({ user: userFound._id });
+    await socket.emit('pdfsData', pdfs)
+    return pdfs ? pdfs : [];
+  } catch (error) {
+    console.log(error.message);
+    throw error;
+  }
+}
+
+
+const getNewChat = async (pdf, email, socket) => {
+  try {
+    const userFound = await User.findOne({ email });
+    const pdfFound = await Pdf.findOne({ fileName: pdf });
+
+    const pdfData = await PDFParser(pdfFound.data);
+    //ask a question from the given pdf and get an answer
+    const chatName = await generateCompletion('generate a short name regarding the subject with space and max 3 words', pdfData.text);
+    const chatNameFound = await Chat.findOne({
+      user: userFound._id,
+      pdf: pdfFound._id,
+      chatName
+    })
+    while (chatNameFound) {
+      chatName = await generateCompletion('generate a short name regarding the subject with space and max 3 words', pdfData.text);
+    }
+    if (userFound && pdfFound && chatNameFound === null) {
+      const newChat = new Chat({
+        chatName,
+        user: userFound._id,
+        pdf: pdfFound._id,
+      })
+      await newChat.save();
+    }
+    const chats = await Chat.find({ user: userFound._id, pdf: pdfFound._id })
+      .sort({ createdAt: -1 });
+    //send chats to the frontend
+    socket.emit('setchats', chats)
+  } catch (error) {
+    console.error(error.message);
+  }
+}
+const getChats = async (data, email, socket) => {
+  try {
+    const userFound = await User.findOne({ email });
+    const pdfFound = await Pdf.findOne({ fileName: data })
+    const chats = await Chat.find({ user: userFound._id, pdf: pdfFound._id })
+      .sort({ createdAt: -1 });
+    //send chats to the frontend
+    socket.emit('setchats', chats)
+  } catch (error) {
+    console.log(error.message);
+    throw error;
+  }
 }
 
 const getMessages = async (req, socket) => {
-  const { email, chat, pdf, } = req;
-  //find user by userId, pdf by pdfId, chats by chatId
-  const userFound = await User.findOne({ email });
-  const pdfFound = await Pdf.findOne({ fileName: pdf });
-  const chatFound = await Chat.findOne({ chatName: chat });
-  const aiBotFound = await AiBot.findOne({ name: "PDFAssist" });
-  if (userFound === null)
-    return { message: 'User not found' };
-  const userId = userFound?._id;
+  try {
+    const { email, chat, pdf } = req;
+    const userFound = await User.findOne({ email });
+    const pdfFound = await Pdf.findOne({ fileName: pdf });
+    const chatFound = await Chat.findOne({ chatName: chat });
+    const aiBotFound = await AiBot.findOne({ name: "PDFAssist" });
+    if (userFound === null)
+      return { message: 'User not found' };
+    const userId = userFound?._id;
 
-  if (pdfFound === null)
-    return { message: 'Pdf not found' };
-  const pdfId = pdfFound?._id
+    if (pdfFound === null)
+      return { message: 'Pdf not found' };
+    const pdfId = pdfFound?._id
 
-  let chatId = "";
-  if (chatFound === null) {
-    const newChat = new Chat({
-      chatName: chat,
-      user: userId,
-      pdf: pdfId,
-    })
-    await newChat.save();
-    chatId = newChat._id;
-  } else {
-    chatId = chatFound._id;
+    let chatId = "";
+    if (chatFound === null) {
+      const newChat = new Chat({
+        chatName: chat,
+        user: userId,
+        pdf: pdfId,
+      })
+      await newChat.save();
+      chatId = newChat._id;
+    } else {
+      chatId = chatFound._id;
+    }
+
+    const aiId = aiBotFound?._id;
+    const messages = await Message.find({
+      $or: [
+        { sender: userId },
+        {
+          sender: aiId,
+          user: userId
+        }
+      ],
+      chat: chatId
+    }).sort({ createdAt: 1 });
+
+    //send chats to the frontend
+    if (messages) {
+      const msgs = messages.map((message) => {
+        if (message.sender.toString() === userId.toString())
+          return { message, name: userFound.name, email: userFound.email, picture: userFound.pic }
+        if (message.sender.toString() === aiId.toString())
+          return { message, name: aiBotFound.name, email: aiBotFound.email, picture: aiBotFound.pic }
+      })
+      socket.emit('messages recieved', msgs)
+      return msgs
+    } else {
+      return { message: "No chats found, create a new chat" }
+    }
+  } catch (error) {
+    console.log(error.message);
+    throw error;
   }
-
-  const aiId = aiBotFound?._id;
-  Message.find({
-    $or: [
-      { sender: userId },
-      {
-        sender: aiId,
-        user: userId
-      }
-    ],
-    chat: chatId
-  })
-    .sort({ createdAt: 1 })
-    .then(messages => {
-      //send chats to the frontend
-      if (messages) {
-        const msgs = messages.map((message) => {
-          if (message.sender.toString() === userId.toString())
-            return { message, name: userFound.name, email: userFound.email, picture: userFound.pic }
-          if (message.sender.toString() === aiId.toString())
-            return { message, name: aiBotFound.name, email: aiBotFound.email, picture: aiBotFound.pic }
-        })
-        socket.emit('messages recieved', msgs)
-        return msgs
-      }
-      else
-        return { message: "No chats found, create a new chat" }
-    })
-    .catch(err => {
-      return { error: err.message }
-    })
 }
 
 const askAnything = async (req, res, socket) => {
@@ -141,8 +197,8 @@ const askAnything = async (req, res, socket) => {
     }
     socket.emit('message', userData)
 
-    // find a aiBot in database. if not exists, create one and
-    // get it's id
+    // find an aiBot in the database. If it doesn't exist, create one and
+    // get its id
     let aiBot = {};
     let aiId = "";
     const aiBotFound = await AiBot.findOne({ name: "PDFAssist" });
@@ -152,10 +208,11 @@ const askAnything = async (req, res, socket) => {
       })
       await aiBot.save();
       aiId = aiBot?._id;
+    } else {
+      aiId = aiBotFound?._id;
     }
-    aiId = aiBotFound?._id;
 
-    //create ai's message and store it in database
+    //create ai's message and store it in the database
     const pdfData = await PDFParser(pdfFound.data);
     //ask a question from the given pdf and get an answer
     const answer = await generateCompletion(question, pdfData.text);
@@ -180,9 +237,9 @@ const askAnything = async (req, res, socket) => {
     socket.emit('message', aiData)
     //send the answer as a response to the frontend
     return answer;
-  } catch (err) {
-    console.log(err)
-    res = err.message;
+  } catch (error) {
+    console.log(error.message);
+    res = error.message;
   }
 }
 
@@ -193,14 +250,16 @@ const deletePdf = async (req, email, socket) => {
     const pdfFound = await Pdf.findOneAndRemove({ fileName, user: userFound._id });
     // Save the pdf buffer to MongoDB using Mongoose
     if (!pdfFound) {
-      console.log("pdf with this name doesn't exists")
+      console.log("pdf with this name doesn't exist")
     }
     const pdfs = await Pdf.find({ user: userFound._id })
     socket.emit('pdfsData', pdfs)
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.log(error.message);
+    throw error;
   }
 }
+
 const uploadPdf = async (req, email, socket) => {
   try {
     const { name } = req;
@@ -221,10 +280,11 @@ const uploadPdf = async (req, email, socket) => {
       const pdfs = await Pdf.find({ user: userFound._id })
       socket.emit('pdfsData', pdfs)
     } else {
-      console.log('pdf with this name is already exists')
+      console.log('pdf with this name already exists')
     }
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.log(error.message);
+    throw error;
   }
 }
 
@@ -234,17 +294,17 @@ exports.connection = (socket) => {
   console.log('connection established on socket');
 
   socket.on('messages', async (userData) => {
-    const data = { ...userData, name, email, picture }
-    const messages = await getMessages(data, socket)
-  })
+    const data = { ...userData, name, email, picture };
+    const messages = await getMessages(data, socket);
+  });
 
   socket.on('message', async (userData) => {
-    const data = { ...userData, name, email, picture }
-    const answer = await askAnything(data, res, socket)
+    const data = { ...userData, name, email, picture };
+    const answer = await askAnything(data, res, socket);
 
     socket.join(userData);
     socket.emit('message recieved', data);
-  })
+  });
 
   socket.on('renamepdf', async (data) => {
     const { fileName, text } = data;
@@ -255,18 +315,26 @@ exports.connection = (socket) => {
       console.log(pdfFound.fileName);
       socket.emit('renamepdfedited', pdfFound.fileName)
     }
-  })
+  });
 
   socket.on('getpdfs', async () => {
-    await getPdfs(email, socket)
-  })
+    await getPdfs(email, socket);
+  });
 
   socket.on('uploadpdf', async (data) => {
-    await uploadPdf(data, email, socket)
-  })
+    await uploadPdf(data, email, socket);
+  });
 
   socket.on('deletepdf', async (data) => {
     await deletePdf(data, email, socket);
-    console.log('delete')
-  })
-}
+    console.log('delete');
+  });
+
+  socket.on('getchats', async data => {
+    await getChats(data, email, socket);
+  });
+
+  socket.on('getnewchat', async (pdf) => {
+    await getNewChat(pdf, email, socket);
+  });
+};

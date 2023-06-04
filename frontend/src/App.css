@@ -3,11 +3,12 @@
   --color-primarylight-darkmode: #d8d6c9;
   --color-hover-darkmode: #5f5e4b;
   --color-secondarydark-darkmode: #242932;
+  --color-secondarydarkest-darkmode: #1a1d24;
   --color-secondarylight-darkmode: #d1cccc;
   --color-button-darkmode: #d8d6c9;
   --color-button-hover-darkmode: #ffffff;
   --color-background-darkmode: #3f4a48;
-  --color-font-button-darkmode: #363634;
+  --color-font-button-darkmode: #313131;
   --font-darkmode: #d8d6c9;
   --font-brightmode: #202020;
   --tooltip-bg: #feffb0;
@@ -17,6 +18,11 @@
 body {
   color: var(--font-darkmode);
   background-color: var(--color-background-darkmode);
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .App {
@@ -30,12 +36,17 @@ body {
 
 /* Track */
 ::-webkit-scrollbar {
-  width: 10px; /* Width of the scrollbar */
+  width: 8px; /* Width of the scrollbar */
   background-color: var(--color-secondarydark-darkmode);
+}
+
+::-webkit-scrollbar-trackc {
+  border-radius: 50%;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
+  border-radius: 5px;
   background: var(--color-hover-darkmode); /* Color of the scrollbar handle */
 }
 

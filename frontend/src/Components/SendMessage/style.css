@@ -1,12 +1,9 @@
 .send-message-container {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
+  padding: 20px 0;
   background-color: var(--color-primarydark-darkmode);
   z-index: 999;
   background-color: rgba(40, 48, 49, 0.473);
@@ -20,7 +17,6 @@
   border: 1px solid #0000003b;
   border-radius: 10px;
   padding: 8px;
-  width: 50%; /* Adjust to your desired width */
   height: 30px;
   font-size: 14px;
   text-align: left;
@@ -40,6 +36,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  transform: translateX(-40px);
+  position: relative;
+  right: 34px;
   cursor: pointer;
 }

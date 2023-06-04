@@ -23,12 +23,16 @@ export const ChatContextProvider = ({ children }) => {
     pdf: 'GunjanSoralResume.pdf',
     chat: 'newchat'
   });
+  const [chats, setChats] = useState({});
 
 
   // Define any functions or state variables that you want to share
 
   return (
-    <ChatContext.Provider value={{ chatInfo, setChatInfo }}>
+    <ChatContext.Provider value={{
+      chatInfo, setChatInfo,
+      chats, setChats
+    }}>
       {children}
     </ChatContext.Provider>
   );

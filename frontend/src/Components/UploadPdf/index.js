@@ -135,7 +135,7 @@ const UploadPdf = ({ setIsUploadPdf, socket }) => {
       if (isTextEdit) {
         handleRenameSubmit();
       } else {
-        handleSubmit();
+        handleSubmit(file, fileName);
       }
     }
   };
@@ -192,7 +192,7 @@ const UploadPdf = ({ setIsUploadPdf, socket }) => {
             </div>
 
             <div className="buttons-container">
-              <div type='submit' onClick={() => handleSubmit(file, fileName)}>
+              <div type='submit' onKeyDown={handleKeyDown} onClick={() => handleSubmit(file, fileName)}>
                 Submit
               </div>
               <div onClick={handleCancel}>

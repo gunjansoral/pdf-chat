@@ -8,25 +8,12 @@ import UploadPdfButton from '../../Components/UploadPdfButton';
 import _isEqual from 'lodash/isEqual';
 
 const Pdfs = () => {
-  const { userData } = useContext(UserContext);
+  const { userData, socket } = useContext(UserContext);
   const [pdfs, setPdfs] = useState([]);
   const [isUploadPdf, setIsUploadPdf] = useState(false);
 
-  const ENDPOINT = 'http://localhost:8000/';
-  let socket = io(ENDPOINT, {
-    query: {
-      token: userData.token,
-    },
-  });
-
-  socket.on('connect', () => {
-    // Handle socket connection
-  });
-
-
   useEffect(() => {
     socket.emit('getpdfs', () => {
-      console.log('pdfs are getting');
     });
   }, [])
   const handlePdfsData = (data) => {

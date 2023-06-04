@@ -1,15 +1,7 @@
-import { useContext, useState } from 'react';
 import './style.css'
 import { AiOutlineSend } from 'react-icons/ai'
-import axios from 'axios';
-import UserContext from '../../Contexts/userContext';
-
 
 const SendMessage = ({ placeholder, sendMessage, setText, text }) => {
-  const [sendBoxText, setSendBoxText] = useState('');
-  const { userData } = useContext(UserContext);
-  const { token } = userData;
-
   return (
     <div className="send-message-container">
       <input type="text"
