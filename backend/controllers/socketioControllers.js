@@ -29,7 +29,6 @@ const generateCompletion = async (question, context) => {
     return response.data.choices[0].text;
   } catch (error) {
     console.log(error.message);
-    throw error;
   }
 }
 
@@ -45,7 +44,6 @@ const getPdfs = async (email, socket) => {
     throw error;
   }
 }
-
 
 const getNewChat = async (pdf, email, socket) => {
   try {
@@ -79,6 +77,7 @@ const getNewChat = async (pdf, email, socket) => {
     console.error(error.message);
   }
 }
+
 const getChats = async (data, email, socket) => {
   try {
     const userFound = await User.findOne({ email });
@@ -260,6 +259,23 @@ const deletePdf = async (req, email, socket) => {
   }
 }
 
+const deleteMessage = async (data, email, socket) => {
+  try {
+    const userFound = await User.findOne({ email });
+    if (userFound) {
+      const deletedMessage = await Message.findByIdAndDelete(data);
+      if (deletedMessage) {
+        console.log('Message deleted:', deletedMessage._id);
+      } else {
+        console.log('Message not found');
+      }
+    }
+  } catch (error) {
+    console.log(error.message);
+    throw error;
+  }
+};
+
 const uploadPdf = async (req, email, socket) => {
   try {
     const { name } = req;
@@ -291,19 +307,16 @@ const uploadPdf = async (req, email, socket) => {
 exports.connection = (socket) => {
   const { name, email, picture } = socket.decoded;
   const res = {};
-  console.log('connection established on socket');
+  console.log(`User connected: ${socket.id}`);
 
   socket.on('messages', async (userData) => {
     const data = { ...userData, name, email, picture };
-    const messages = await getMessages(data, socket);
+    getMessages(data, socket);
   });
 
   socket.on('message', async (userData) => {
     const data = { ...userData, name, email, picture };
-    const answer = await askAnything(data, res, socket);
-
-    socket.join(userData);
-    socket.emit('message recieved', data);
+    askAnything(data, res, socket);
   });
 
   socket.on('renamepdf', async (data) => {
@@ -337,4 +350,15 @@ exports.connection = (socket) => {
   socket.on('getnewchat', async (pdf) => {
     await getNewChat(pdf, email, socket);
   });
+
+  socket.on('deletemessage', async (data) => {
+    const { pdf, chat, message } = data;
+    await deleteMessage(message, email, socket)
+    const response = { ...data, name, email, picture, pdf, chat };
+    getMessages(response, socket);
+  })
+
+  socket.on('disconnect', () => {
+    console.log(`User disconnected: ${socket.id}`)
+  })
 };

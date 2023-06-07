@@ -44,10 +44,6 @@ const Messages = () => {
 
   useEffect(() => {
     const setData = async () => {
-      const Token = Cookies.get('token');
-
-      getUserData(Token)
-
       socket.emit('messages', chatInfo);
       socket.on('messages recieved', (data) => {
         setMessages(data)
@@ -70,7 +66,7 @@ const Messages = () => {
         ref={messageContainerRef}
       >
         {messages?.map((element, index) => (
-          <Message key={index} data={element} />
+          <Message key={index} data={element} socket={socket} />
         ))}
       </div>}
       <SendMessage sendMessage={sendMessage} text={text} setText={setText} placeholder={"ask any question"} />

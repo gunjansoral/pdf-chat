@@ -2,15 +2,13 @@ import { useContext, useEffect, useState } from 'react';
 import Chat from '../Chat';
 import './style.css';
 import ChatContext from '../../Contexts/chatContext';
-import { io } from 'socket.io-client';
 import UserContext from '../../Contexts/userContext';
 
 const Chats = () => {
   const [isLoading, setIsLoading] = useState(false)
   const { chatInfo } = useContext(ChatContext);
+  const { socket } = useContext(UserContext)
   const [chats, setChats] = useState([]);
-  const { userData, socket } = useContext(UserContext);
-  const ENDPOINT = 'http://localhost:8000/';
 
   useEffect(() => {
 
@@ -18,9 +16,6 @@ const Chats = () => {
       socket.emit('getchats', chatInfo.pdf);
     };
     getChats();
-
-
-    // Cleanup function
   }, []);
 
   const handleChats = (data) => {

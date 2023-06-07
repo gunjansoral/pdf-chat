@@ -1,14 +1,11 @@
 import { AiOutlinePlus } from 'react-icons/ai'
 import { BsChatFill } from 'react-icons/bs'
 import './style.css'
-import { useContext, useEffect, useState } from 'react'
-import { io } from 'socket.io-client'
+import { useContext, useState } from 'react'
 import UserContext from '../../Contexts/userContext'
 import ChatContext from '../../Contexts/chatContext'
 import ReactLoading from 'react-loading';
 
-let ENDPOINT = 'http://localhost:8000'
-let socket;
 const Chat = ({ newChat, chat, isLoading, setIsLoading }) => {
   const { userData, socket } = useContext(UserContext)
   const { chatInfo } = useContext(ChatContext)
