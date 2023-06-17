@@ -13,7 +13,7 @@ export const UserContextProvider = ({ children }) => {
   const ENDPOINT = 'http://localhost:8000/';
 
   // Move useState call to a separate function
-  const createSocket = () => {
+  const [socket, setSocket] = useState(() => {
     const socket = io(ENDPOINT, {
       query: {
         token: userData.token,
@@ -25,9 +25,7 @@ export const UserContextProvider = ({ children }) => {
     });
 
     return socket;
-  };
-
-  const [socket, setSocket] = useState(createSocket());
+  });
 
   return (
     <UserContext.Provider value={{ userData, setUserData, socket }}>

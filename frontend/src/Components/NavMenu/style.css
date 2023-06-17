@@ -1,0 +1,15 @@
+.menu-icon {
+  padding: 5px;
+  transform: translateX(-80px);
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  background-color: var(--color-font-button-darkmode);
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  position: absolute;
+  right: 111px;
+  top: 67px;
+}

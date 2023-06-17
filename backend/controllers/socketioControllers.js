@@ -46,24 +46,21 @@ const getPdfs = async (email, socket) => {
 }
 
 const getNewChat = async (pdf, email, socket) => {
+  let chatName, userFound, pdfFound, pdfData;
   try {
-    const userFound = await User.findOne({ email });
-    const pdfFound = await Pdf.findOne({ fileName: pdf });
+    userFound = await User.findOne({ email });
+    pdfFound = await Pdf.findOne({ fileName: pdf });
 
-    const pdfData = await PDFParser(pdfFound.data);
+    pdfData = await PDFParser(pdfFound.data);
     //ask a question from the given pdf and get an answer
-    const chatName = await generateCompletion('generate a short name regarding the subject with space and max 3 words', pdfData.text);
-    const chatNameFound = await Chat.findOne({
-      user: userFound._id,
-      pdf: pdfFound._id,
-      chatName
-    })
-    while (chatNameFound) {
-      chatName = await generateCompletion('generate a short name regarding the subject with space and max 3 words', pdfData.text);
-    }
-    if (userFound && pdfFound && chatNameFound === null) {
+    chatName = await generateCompletion('generate a short name regarding the subject with space and max 3 words', pdfData.text);
+  } catch (error) {
+    console.log(error.message);
+    chatName = 'default';
+  } finally {
+    if (userFound && pdfFound) {
       const newChat = new Chat({
-        chatName,
+        chatName: chatName || 'default',
         user: userFound._id,
         pdf: pdfFound._id,
       })
@@ -73,8 +70,6 @@ const getNewChat = async (pdf, email, socket) => {
       .sort({ createdAt: -1 });
     //send chats to the frontend
     socket.emit('setchats', chats)
-  } catch (error) {
-    console.error(error.message);
   }
 }
 

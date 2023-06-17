@@ -10,15 +10,3 @@
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(12px);
 }
-
-.log-out-button {
-  cursor: pointer;
-  transform: translateX(-80px);
-  border-radius: 20px;
-  padding: 10px 20px 10px 20px;
-  transition: ease-in 0.2s;
-}
-
-.log-out-button:hover {
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.685);
-}

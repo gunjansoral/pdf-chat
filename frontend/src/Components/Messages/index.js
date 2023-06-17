@@ -5,33 +5,17 @@ import { useNavigate } from 'react-router-dom';
 import UserContext from '../../Contexts/userContext';
 import ChatContext from '../../Contexts/chatContext';
 import MessagesContext from '../../Contexts/messagesContext';
-import axios from 'axios';
 import Message from '../Message';
-import Cookies from 'js-cookie';
-const ENDPOINT = 'http://localhost:8000';
+
 const Messages = () => {
   const navigate = useNavigate()
 
   const [text, setText] = useState('');
   const messageContainerRef = useRef(null);
 
-  const { userData, setUserData, socket } = useContext(UserContext);
-  const { chatInfo, setChatInfo } = useContext(ChatContext);
+  const { userData, socket } = useContext(UserContext);
+  const { chatInfo } = useContext(ChatContext);
   const { messages, setMessages } = useContext(MessagesContext);
-
-  const getUserData = async (token) => {
-    const response = await axios.get(`${ENDPOINT}/user`,
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          // "Connection": 'keep-alive',
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      });
-    const { name, email, picture, lastPdf, lastChat } = response.data;
-    setUserData({ ...userData, name, email, picture, lastPdf, lastChat });
-  }
 
   const sendMessage = () => {
     socket.emit('message', {

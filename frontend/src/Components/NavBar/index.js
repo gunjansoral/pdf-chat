@@ -1,21 +1,16 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import './style.css';
 import { useNavigate } from 'react-router-dom';
+import NavMenu from '../NavMenu';
+import UserContext from '../../Contexts/userContext';
 
 const NavBar = () => {
-  const navigate = useNavigate();
-
-  const handleLogOut = () => {
-    Cookies.remove('token');
-    navigate('/login');
-  };
-
   return (
     <div className="nav-container">
       <div className="menu-button"></div>
-      <div onClick={handleLogOut} className="log-out-button">
-        <span>Log out</span>
+      <div>
+        <NavMenu />
       </div>
     </div>
   );

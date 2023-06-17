@@ -6,12 +6,20 @@ import ChatContext from '../../Contexts/chatContext';
 import Chats from '../../Components/Chats';
 import Messages from '../../Components/Messages';
 
-const Home = () => {
+function Home({ setIsLoggedIn }) {
   const navigate = useNavigate();
   const messageContainerRef = useRef(null);
   const { userData, socket } = useContext(UserContext);
   const { chatInfo } = useContext(ChatContext);
   const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    if (userData.token !== '')
+      setIsLoggedIn(true)
+    else
+      setIsLoggedIn(false)
+  }, []);
+
 
   useEffect(() => {
     if (!userData.token) {

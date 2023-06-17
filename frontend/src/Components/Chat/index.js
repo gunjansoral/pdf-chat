@@ -7,7 +7,7 @@ import ChatContext from '../../Contexts/chatContext'
 import ReactLoading from 'react-loading';
 
 const Chat = ({ newChat, chat, isLoading, setIsLoading }) => {
-  const { userData, socket } = useContext(UserContext)
+  const { socket } = useContext(UserContext)
   const { chatInfo } = useContext(ChatContext)
   const [isActive, setIsActive] = useState(false)
 
